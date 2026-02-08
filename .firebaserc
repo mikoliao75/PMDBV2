@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "project-c6dea33f-f216-4918-a22"
+  },
+  "targets": {
+    "project-c6dea33f-f216-4918-a22": {
+      "hosting": {
+        "main-site": [
+          "pm-war-room-v2"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -1,53 +1,53 @@
-# To learn more about how to use Nix to configure your environment
-# see: https://developers.google.com/idx/guides/customize-idx-env
-{ pkgs, ... }: {
+{pkgs}: {
   # Which nixpkgs channel to use.
-  channel = "stable-24.05"; # or "unstable"
+  channel = "stable-24.05"; 
+
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    # pkgs.go
-    # pkgs.python311
-    # pkgs.python311Packages.pip
-    # pkgs.nodejs_20
-    # pkgs.nodePackages.nodemon
+    pkgs.nodejs_20
+    pkgs.zulu
+    pkgs.zip
   ];
+
   # Sets environment variables in the workspace
-  env = {};
+  env = {
+    NEXT_PUBLIC_FIREBASE_API_KEY = "AIzaSyCt0yH4CxjNGSAwZo9EGyRicrQWN2V4_TI";
+    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = "pm-dashboard-personal-20-ea9df.firebaseapp.com";
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID = "pm-dashboard-personal-20-ea9df";
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET = "pm-dashboard-personal-20-ea9df.firebasestorage.app";
+    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = "343902118337";
+    NEXT_PUBLIC_FIREBASE_APP_ID = "1:343902118337:web:6bb14830304264ceaf0f40";
+    NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID = "G-88SFDHQDJT";
+    GOOGLE_API_KEY = "AIzaSyAE_LDtrncWwi7o9OtkZEaHAagRbw4S1GE"; # Corrected from GEMINI_API_KEY
+  };
+
+  services.firebase.emulators = {
+    detect = false;
+    projectId = "pm-dashboard-personal-20-ea9df";
+    services = [ "auth" "firestore" "storage" ]; 
+  };
+
   idx = {
-    # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
-    extensions = [
-      # "vscodevim.vim"
-      "google.gemini-cli-vscode-ide-companion"
-    ];
-    # Enable previews
+    extensions = [];
+
+    workspace = {
+      onCreate = {
+        default.openFiles = [
+          "src/app/page.tsx"
+        ];
+      };
+      onStart = {
+        install = "npm install";
+      };
+    };
+
     previews = {
       enable = true;
       previews = {
-        # web = {
-        #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
-        #   # and show it in IDX's web preview panel
-        #   command = ["npm" "run" "dev"];
-        #   manager = "web";
-        #   env = {
-        #     # Environment variables to set for your server
-        #     PORT = "$PORT";
-        #   };
-        # };
-      };
-    };
-    # Workspace lifecycle hooks
-    workspace = {
-      # Runs when a workspace is first created
-      onCreate = {
-        # Example: install JS dependencies from NPM
-        # npm-install = "npm install";
-        # Open editors for the following files by default, if they exist:
-        default.openFiles = [ ".idx/dev.nix" "README.md" ];
-      };
-      # Runs when the workspace is (re)started
-      onStart = {
-        # Example: start a background task to watch and re-build backend code
-        # watch-backend = "npm run watch-backend";
+        web = {
+          command = ["npm" "run" "dev" "--" "--port" "$PORT" "--hostname" "0.0.0.0"];
+          manager = "web";
+        };
       };
     };
   };
